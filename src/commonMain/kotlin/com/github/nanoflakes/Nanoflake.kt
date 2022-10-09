@@ -9,12 +9,26 @@ interface Nanoflake {
      */
     public val value: Long
 
+    /**
+     * The timestamp of the nanoflake.
+     */
     public val timestamp get() = Nanoflakes.timestampValue(value)
 
+    /**
+     * The generator ID of the nanoflake.
+     */
     public val generator get() = Nanoflakes.generatorValue(value)
 
+    /**
+     * The sequence number of the nanoflake.
+     */
     public val sequence get() = Nanoflakes.sequenceValue(value)
 
+    public operator fun component0() = timestamp
+
+    public operator fun component1() = generator
+
+    public operator fun component2() = sequence
 
     /**
      * Gets the nanoflake value as a Long.
