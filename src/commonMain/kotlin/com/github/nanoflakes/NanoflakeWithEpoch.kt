@@ -6,8 +6,8 @@ package com.github.nanoflakes
  * @param nanoflake the underlying nanoflake information.
  * @param epochInMillis the nanoflake's epoch.
  */
-data class NanoflakeWithEpoch(
-    private val nanoflake: Nanoflake,
+class NanoflakeWithEpoch(
+    private val nanoflake: PrimitiveNanoflake,
     val epochInMillis: Long,
 ): Nanoflake by nanoflake {
     /**
@@ -28,8 +28,30 @@ data class NanoflakeWithEpoch(
      * @return a [OffsetDateTime] set to the creation time.
      */
     val creationTime get() = creationTimeInMillis.toDateTime()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as NanoflakeWithEpoch
+
+        if (nanoflake != other.nanoflake) return false
+        if (epochInMillis != other.epochInMillis) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = nanoflake.hashCode()
+        result = 31 * result + epochInMillis.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "NanoflakeWithEpoch(nanoflake=$nanoflake, epochInMillis=$epochInMillis)"
+    }
 }
 
-public fun Nanoflake.withEpoch(epoch: Long): NanoflakeWithEpoch {
+public fun PrimitiveNanoflake.withEpoch(epoch: Long): NanoflakeWithEpoch {
     return NanoflakeWithEpoch(this, epoch)
 }

@@ -11,11 +11,11 @@ import com.github.nanoflakes.Nanoflakes.TIMESTAMP_SHIFT
  * @param epoch       the generator's epoch.
  * @param generatorId the generator's ID.
  */
-class NanoflakeLocalGenerator(private val epoch: Long, private val generatorId: Long) : NanoflakeGenerator {
+data class NanoflakeLocalGenerator(private val epoch: Long, private val generatorId: Long) : NanoflakeGenerator {
     private var lastTimestamp = -1L
     private var sequence = 0L
 
-    override fun next(): NanoflakeWithEpoch {
+    override fun next(): PrimitiveNanoflake {
         var timestamp: Long = currentTimeMillis()
         if (timestamp < lastTimestamp) {
             throw RuntimeException("Clock moved backwards. Refusing to generate for " + (lastTimestamp - timestamp) + "milliseconds.")
@@ -29,26 +29,12 @@ class NanoflakeLocalGenerator(private val epoch: Long, private val generatorId: 
             }
             lastTimestamp = timestamp
             val value = timestamp - epoch shl TIMESTAMP_SHIFT or (generatorId shl GENERATOR_ID_SHIFT) or sequence
-            return Nanoflake(value).withEpoch(epoch)
+            return PrimitiveNanoflake(value)
         }
     }
 
     override fun epochMillis(): Long {
         return epoch
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || other !is NanoflakeLocalGenerator) return false
-        return epoch == other.epoch && generatorId == other.generatorId
-    }
-
-    override fun hashCode(): Int {
-        return arrayOf(epoch, generatorId).contentHashCode()
-    }
-
-    override fun toString(): String {
-        return "NanoflakeLocalGenerator{epoch=$epoch, generatorId=$generatorId, lastTimestamp=$lastTimestamp, sequence=$sequence}"
     }
 
     private fun tilNextMillis(lastTimestamp: Long): Long {
@@ -57,8 +43,13 @@ class NanoflakeLocalGenerator(private val epoch: Long, private val generatorId: 
         return timestamp
     }
 
+    override fun toString(): String {
+        return "NanoflakeLocalGenerator(epoch=$epoch, generatorId=$generatorId, lastTimestamp=$lastTimestamp, sequence=$sequence)"
+    }
+
+
     init {
-        require(epoch <= currentTimeMillis()) { "Specified epoch is on the future." }
+        require(epoch <= currentTimeMillis()) { "Specified epoch is in the future." }
         require(generatorId in 0..MAX_GENERATOR_ID) { "Invalid generator id, outside of [0, $MAX_GENERATOR_ID] range" }
     }
 }

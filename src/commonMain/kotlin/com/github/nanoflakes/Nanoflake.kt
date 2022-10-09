@@ -3,7 +3,7 @@ package com.github.nanoflakes
 /**
  * A [Nanoflake](https://github.com/nanoflakes/nanoflakes).
  */
-interface Nanoflake {
+sealed interface Nanoflake {
     /**
      * The value of the nanoflake.
      */

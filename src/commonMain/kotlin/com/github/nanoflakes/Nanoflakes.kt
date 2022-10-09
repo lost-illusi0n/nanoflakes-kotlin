@@ -43,10 +43,20 @@ object Nanoflakes {
      * Creates a local generator.
      * @param epoch base epoch
      * @param generatorId the generator id.
-     * @return a new local nanoflake generator.
+     * @return a new [NanoflakeLocalGenerator].
      */
     fun localGenerator(epoch: Long, generatorId: Long): NanoflakeGenerator {
         return NanoflakeLocalGenerator(epoch, generatorId)
+    }
+
+    /**
+     * Creates a local generator that keeps epoch information in the resulting nanoflake.
+     * @param epoch base epoch
+     * @param generatorId the generator id.
+     * @return a new local nanoflake generator.
+     */
+    fun withEpochLocalGenerator(epoch: Long, generatorId: Long): NanoflakeWithEpochGenerator {
+        return localGenerator(epoch, generatorId).withEpoch()
     }
 
     /**
