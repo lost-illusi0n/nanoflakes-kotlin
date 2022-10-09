@@ -3,57 +3,25 @@ package com.github.nanoflakes
 /**
  * A [Nanoflake](https://github.com/nanoflakes/nanoflakes).
  */
-class Nanoflake {
-    /**
-     * The base epoch of the nanoflake.
-     */
-    private val epoch: Long
-
+interface Nanoflake {
     /**
      * The value of the nanoflake.
      */
-    private val value: Long
+    public val value: Long
 
-    /**
-     * Creates a new nanoflake.
-     *
-     * @param epoch the nanoflake's epoch.
-     * @param value the nanoflake's value.
-     */
-    constructor(epoch: Long, value: Long) {
-        this.epoch = epoch
-        this.value = value
-    }
+    public val timestamp get() = Nanoflakes.timestampValue(value)
 
-    /**
-     * Creates a new nanoflake, parsing the value from a string.
-     *
-     * @param epoch the nanoflake's epoch.
-     * @param value the nanoflake's value.
-     */
-    constructor(epoch: Long, value: String) {
-        this.epoch = epoch
-        this.value = value.toLong()
-    }
+    public val generator get() = Nanoflakes.generatorValue(value)
 
-    /**
-     * Creates a new nanoflake, parsing the value from a string with a radix.
-     *
-     * @param epoch the nanoflake's epoch.
-     * @param value the nanoflake's value.
-     * @param radix the radix of the nanoflake.
-     */
-    constructor(epoch: Long, value: String, radix: Int) {
-        this.epoch = epoch
-        this.value = value.toLong(radix)
-    }
+    public val sequence get() = Nanoflakes.sequenceValue(value)
+
 
     /**
      * Gets the nanoflake value as a Long.
      *
      * @return the value as a long.
      */
-    fun asLong(): Long {
+    public fun asLong(): Long {
         return value
     }
 
@@ -62,7 +30,7 @@ class Nanoflake {
      *
      * @return the value as a String.
      */
-    fun asString(): String {
+    public fun asString(): String {
         return value.toString()
     }
 
@@ -72,66 +40,19 @@ class Nanoflake {
      * @param radix the radix.
      * @return the value as a String.
      */
-    fun withRadix(radix: Int): String {
+    public fun withRadix(radix: Int): String {
         return value.toString(radix)
     }
+}
 
-    /**
-     * Gets the creation time as an [OffsetDateTime].
-     *
-     * @return a [OffsetDateTime] set to the creation time.
-     */
-    fun creationTime(): DateTime {
-        return creationTimeMillis().toDateTime()
-    }
+public fun nanoflake(value: Long): PrimitiveNanoflake {
+    return PrimitiveNanoflake(value)
+}
 
-    /**
-     * Gets the creation time.
-     *
-     * @return the creation time in milliseconds.
-     */
-    fun creationTimeMillis(): Long {
-        return epoch + Nanoflakes.timestampValue(value)
-    }
+public fun nanoflake(value: String): PrimitiveNanoflake {
+    return PrimitiveNanoflake(value.toLong())
+}
 
-    /**
-     * Gets this nanoflake's epoch.
-     *
-     * @return the epoch in milliseconds.
-     */
-    fun epochMillis(): Long {
-        return epoch
-    }
-
-    /**
-     * Gets this nanoflake's epoch as an [OffsetDateTime].
-     *
-     * @return a [OffsetDateTime] set to the epoch time.
-     */
-    fun epoch(): DateTime {
-        return epochMillis().toDateTime()
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || other !is Nanoflake) return false
-        return epoch == other.epoch && value == other.value
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    override fun hashCode(): Int {
-        return arrayOf<Any?>(epoch, value).contentHashCode()
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    override fun toString(): String {
-        return "Nanoflake{epoch=$epoch, value=$value}"
-    }
+public fun nanoflake(value: String, radix: Int): PrimitiveNanoflake {
+    return PrimitiveNanoflake(value.toLong(radix))
 }

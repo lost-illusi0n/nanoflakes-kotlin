@@ -15,7 +15,7 @@ class NanoflakeLocalGenerator(private val epoch: Long, private val generatorId: 
     private var lastTimestamp = -1L
     private var sequence = 0L
 
-    override fun next(): Nanoflake {
+    override fun next(): NanoflakeWithEpoch {
         var timestamp: Long = currentTimeMillis()
         if (timestamp < lastTimestamp) {
             throw RuntimeException("Clock moved backwards. Refusing to generate for " + (lastTimestamp - timestamp) + "milliseconds.")
@@ -29,7 +29,7 @@ class NanoflakeLocalGenerator(private val epoch: Long, private val generatorId: 
             }
             lastTimestamp = timestamp
             val value = timestamp - epoch shl TIMESTAMP_SHIFT or (generatorId shl GENERATOR_ID_SHIFT) or sequence
-            return Nanoflake(epoch, value)
+            return Nanoflake(value).withEpoch(epoch)
         }
     }
 
