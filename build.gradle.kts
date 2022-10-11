@@ -1,14 +1,16 @@
 plugins {
-    kotlin("multiplatform") version "1.5.31"
+    kotlin("multiplatform") version "1.7.20"
     `maven-publish`
     id("org.jetbrains.dokka") version "1.5.0"
 }
 
-group = "com.github.nanoflakes"
-version = "1.2.2"
+allprojects {
+    group = "com.github.nanoflakes"
+    version = "1.2.2"
 
-repositories {
-    mavenCentral()
+    repositories {
+        mavenCentral()
+    }
 }
 
 kotlin {
@@ -29,31 +31,6 @@ kotlin {
 
     mingwX64()
     mingwX86()
-
-    sourceSets {
-        val commonMain by getting
-
-        val jvmMain by getting
-        val jsMain by getting
-
-        val linuxArm64Main by getting
-        val linuxArm32HfpMain by getting
-        val linuxX64Main by getting
-
-        val mingwX64Main by getting
-        val mingwX86Main by getting
-
-        val nativeMain by creating {
-            dependsOn(commonMain)
-
-            linuxArm64Main.dependsOn(this)
-            linuxArm32HfpMain.dependsOn(this)
-            linuxX64Main.dependsOn(this)
-
-            mingwX64Main.dependsOn(this)
-            mingwX86Main.dependsOn(this)
-        }
-    }
 }
 
 tasks {
